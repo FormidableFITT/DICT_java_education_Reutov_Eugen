@@ -16,6 +16,12 @@ public class ChatBott {
         int age3 = in.nextInt();
         int age = (age1 * 70 + age2 * 21 + age3 * 15) % 105;
         System.out.printf("Your age is %d  that's a good time to start programming! ", age);
+        System.out.println("NoW i will prove to you that i can count to any number you want");
+
+        int ageFor = in.nextInt();
+        for(int i = 0; i < ageFor + 1; i++) {
+            System.out.printf("%d !\n", i);
+        }
         in.close();
 
 
