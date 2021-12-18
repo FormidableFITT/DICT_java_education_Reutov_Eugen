@@ -3,13 +3,12 @@ import java.lang.reflect.Array;
 import java.util.Scanner;
 import java.util.Random;
 
-public class hangman  {
-
+public class hangman {
     public static void main(String[] args) {
-
         String[] wordsArr = {"java", "kotlin", "python", "javascript"};
         String word = generateWord(wordsArr);
         StringBuilder hiddenWord = hiddenWordGen(word);
+        StringBuilder chosenLetters = new StringBuilder("");
 
 
         System.out.println("HANGMAN");
@@ -23,16 +22,14 @@ public class hangman  {
                     System.out.printf("Guess the word %s:", hiddenWord);
                     Scanner userInput = new Scanner(System.in);
                     String answer = userInput.nextLine();
-                    if (!word.contains(answer)) {
-                        System.out.println("The letter doesn't appear in word");
-                        --lives;
-                    }
-                    else if (hiddenWord.indexOf(answer) != -1){
-                        System.out.println("No improvements");
-                        --lives;
-                    }
-                    else {
-                        hiddenWord = updateHiddenWord(hiddenWord, answer, word);
+                    if (checker(answer, chosenLetters)) {
+                        chosenLetters.append(answer);
+                        if (!word.contains(answer)) {
+                            System.out.println("The letter doesn't appear in word");
+                            --lives;
+                        } else {
+                            hiddenWord = updateHiddenWord(hiddenWord, answer, word);
+                        }
                     }
                 } else {
                     System.out.println(hiddenWord);
@@ -40,7 +37,6 @@ public class hangman  {
                     break;
                 }
             }
-
         }
     }
     public static String generateWord(String[] wordsArr) {
@@ -63,5 +59,26 @@ public class hangman  {
             }
         }
         return hiddenWord;
+    }
+
+    public static Boolean checker(String answer, StringBuilder chosen_letters) {
+        String letters = "qwertyuiopasdfghjklzxcvbnm";
+        if (answer.length() != 1) {
+            System.out.println("You should enter one letter");
+            return false;
+        }
+        else if (!letters.contains(answer)){
+            System.out.println("You should enter only english lowercase letters!");
+            return false;
+        }
+        else if (chosen_letters.indexOf(answer) != -1){
+            System.out.println("You already choose that letter");
+            return false;
+        }
+        else {
+            return true;
+        }
+
+
     }
 }
