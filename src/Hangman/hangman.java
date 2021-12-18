@@ -1,46 +1,67 @@
 package Hangman;
+import java.lang.reflect.Array;
 import java.util.Scanner;
 import java.util.Random;
 
-public class hangman {
-    static String[] WORDS = {"python", "java", "javascript", "kotlin"};
+public class hangman  {
+
     public static void main(String[] args) {
-        System.out.println("HANGMAN\n" +
-                "The game will be available soon.");
-        Scanner in = new Scanner(System.in);
-        String word = WORDS[new Random().nextInt(WORDS.length)];
-        for(String i :word) {
 
-        }
-        String allGuessCharsStr = "";
-        while(true)
-        {   System.out.print("Guess the word:");
-            System.out.println(getMasked(word, allGuessCharsStr));
-            String name = in.nextLine();
-            if(word.equals(name) ){
-                System.out.println("You survived!");
+        String[] wordsArr = {"java", "kotlin", "python", "javascript"};
+        String word = generateWord(wordsArr);
+        StringBuilder hiddenWord = hiddenWordGen(word);
+
+
+        System.out.println("HANGMAN");
+        int lives = 8;
+        while (true) {
+            if (lives == 0){
+                System.out.println("You lost!");
                 break;
+            } else {
+                if (hiddenWord.indexOf("-") != -1) {
+                    System.out.printf("Guess the word %s:", hiddenWord);
+                    Scanner userInput = new Scanner(System.in);
+                    String answer = userInput.nextLine();
+                    if (!word.contains(answer)) {
+                        System.out.println("The letter doesn't appear in word");
+                        --lives;
+                    }
+                    else if (hiddenWord.indexOf(answer) != -1){
+                        System.out.println("No improvements");
+                        --lives;
+                    }
+                    else {
+                        hiddenWord = updateHiddenWord(hiddenWord, answer, word);
+                    }
+                } else {
+                    System.out.println(hiddenWord);
+                    System.out.println("You win!");
+                    break;
+                }
             }
-            System.out.println("You lost!");
+
         }
-
-        in.close();
-
     }
-    private static final String getMasked(String secret_word, String all_guessesStrESIfNone)  {
-        try  {
-            if(all_guessesStrESIfNone.length() == 0)  {
-                all_guessesStrESIfNone = " ";   //Any non-letter will suffice
+    public static String generateWord(String[] wordsArr) {
+        Random randomIntGen = new Random();
+        int randomInt = randomIntGen.nextInt(wordsArr.length);
+        return wordsArr[randomInt];
+    }
+    public static StringBuilder hiddenWordGen(String word) {
+        StringBuilder hiddenWord = new StringBuilder("");
+        hiddenWord.append("-".repeat(word.length()));
+        return hiddenWord;
+    }
+    public static StringBuilder updateHiddenWord(StringBuilder hiddenWord, String answer, String  word) {
+        int index = 0;
+        while (index >= 0) {
+            index = word.indexOf(answer, index);
+            if (index >= 0) {
+                hiddenWord.setCharAt(index, answer.charAt(0));
+                ++index;
             }
-        }  catch(NullPointerException npx)  {
-            throw  new NullPointerException("all_guessesStrESIfNone");
         }
-
-        //Mask all not-yet-guessed characters with an underscore.
-        secret_word = secret_word.replaceAll("[^" + all_guessesStrESIfNone + "]", "_");
-
-        //Insert a space between every character (trim eliminates the final).
-        return  secret_word.replaceAll("(.)", "$1 ").trim();
+        return hiddenWord;
     }
 }
-
