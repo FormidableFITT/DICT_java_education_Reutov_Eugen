@@ -8,13 +8,21 @@ public class Tictactoe {
     String line2 = "___";
     String line3 = "___";
     char moveNow = 'X';
+
     public static void main(String[] args) {
         Tictactoe myGame = new Tictactoe();
-        myGame.setField();
         myGame.showField();
-        myGame.makeMove();
-        myGame.showField();
+        while (true) {
+            myGame.makeMove();
+            myGame.showField();
+            String gameStatus = myGame.checkGameStatus();
+            if (!gameStatus.equals("Game unfinished")) {
+                System.out.println(gameStatus);
+                break;
+            }
+        }
     }
+
     public int countMatches(String target) {
         String deleteTarget1 = line1.replace (target, "");
         String deleteTarget2 = line2.replace (target, "");
@@ -55,13 +63,10 @@ public class Tictactoe {
         } else {
             return "Draw";
         }
-
     }
-
     public void makeMove() {
         System.out.println("Enter coordinates");
         String coordinates = userInput.nextLine();
-
         if (moveChecker(coordinates)) {
             if (coordinates.charAt(0) == '1') {
                 line1 = replaceStringChar(line1, moveNow, Character.getNumericValue(coordinates.charAt(2)) - 1);
@@ -71,12 +76,16 @@ public class Tictactoe {
                 line3 = replaceStringChar(line3, moveNow, Character.getNumericValue(coordinates.charAt(2)) - 1);
             }
         }
+        if (moveNow == 'X'){
+            moveNow = 'O';
+        } else {
+            moveNow = 'X';
+        }
     }
 
     public String replaceStringChar(String string, char character, int index) {
         return string.substring(0, index) + character + string.substring(index+1);
     }
-
     public boolean moveChecker (String coordinates) {
         if (coordinates.length() != 3) {
             System.out.println("You should enter two numbers separated by space!");
@@ -112,14 +121,6 @@ public class Tictactoe {
         } else {
             return false;
         }
-    }
-
-    public void setField() {
-        System.out.println("Enter cells:");
-        String newField = userInput.nextLine();
-        line1 = newField.substring(0,3);
-        line2 = newField.substring(3, 6);
-        line3 = newField.substring(6, 9);
     }
 
     public void showField() {
