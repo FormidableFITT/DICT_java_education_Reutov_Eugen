@@ -1,40 +1,49 @@
 package Hangman;
 import java.lang.reflect.Array;
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.Random;
 
 public class hangman {
+
     public static void main(String[] args) {
-        String[] wordsArr = {"java", "kotlin", "python", "javascript"};
-        String word = generateWord(wordsArr);
-        StringBuilder hiddenWord = hiddenWordGen(word);
-        StringBuilder chosenLetters = new StringBuilder("");
-
-
-        System.out.println("HANGMAN");
-        int lives = 8;
         while (true) {
-            if (lives == 0){
-                System.out.println("You lost!");
+            System.out.println("HANGMAN");
+            System.out.println("Type 'play' to play the game or 'exit'");
+            Scanner userInput = new Scanner(System.in);
+            String choice = userInput.nextLine();
+            if (Objects.equals(choice, "exit")) {
                 break;
-            } else {
-                if (hiddenWord.indexOf("-") != -1) {
-                    System.out.printf("Guess the word %s:", hiddenWord);
-                    Scanner userInput = new Scanner(System.in);
-                    String answer = userInput.nextLine();
-                    if (checker(answer, chosenLetters)) {
-                        chosenLetters.append(answer);
-                        if (!word.contains(answer)) {
-                            System.out.println("The letter doesn't appear in word");
-                            --lives;
+            } else if (Objects.equals(choice, "play")) {
+                int lives = 8;
+                String[] wordsArr = {"java", "kotlin", "python", "javascript"};
+                String word = generateWord(wordsArr);
+                StringBuilder hiddenWord = hiddenWordGen(word);
+                StringBuilder chosenLetters = new StringBuilder("");
+                while (true) {
+
+                    if (lives == 0) {
+                        System.out.println("You lost!");
+                        break;
+                    } else {
+                        if (hiddenWord.indexOf("-") != -1) {
+                            System.out.printf("Guess the word %s:", hiddenWord);
+                            String answer = userInput.nextLine();
+                            if (checker(answer, chosenLetters)) {
+                                chosenLetters.append(answer);
+                                if (!word.contains(answer)) {
+                                    System.out.println("The letter doesn't appear in word");
+                                    --lives;
+                                } else {
+                                    hiddenWord = updateHiddenWord(hiddenWord, answer, word);
+                                }
+                            }
                         } else {
-                            hiddenWord = updateHiddenWord(hiddenWord, answer, word);
+                            System.out.println(hiddenWord);
+                            System.out.println("You win!");
+                            break;
                         }
                     }
-                } else {
-                    System.out.println(hiddenWord);
-                    System.out.println("You win!");
-                    break;
                 }
             }
         }
@@ -60,7 +69,6 @@ public class hangman {
         }
         return hiddenWord;
     }
-
     public static Boolean checker(String answer, StringBuilder chosen_letters) {
         String letters = "qwertyuiopasdfghjklzxcvbnm";
         if (answer.length() != 1) {
@@ -78,7 +86,5 @@ public class hangman {
         else {
             return true;
         }
-
-
     }
 }
