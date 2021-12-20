@@ -1,90 +1,70 @@
 package Hangman;
-import java.lang.reflect.Array;
-import java.util.Objects;
-import java.util.Scanner;
-import java.util.Random;
+import java.util.*;
 
 public class hangman {
-
     public static void main(String[] args) {
-        while (true) {
-            System.out.println("HANGMAN");
-            System.out.println("Type 'play' to play the game or 'exit'");
-            Scanner userInput = new Scanner(System.in);
-            String choice = userInput.nextLine();
-            if (Objects.equals(choice, "exit")) {
+        Scanner scan = new Scanner(System.in);
+        System.out.println("Висилица!\nИгра скоро будет доступна...");
+        while (true){
+            System.out.print("Нажми \"играть\" для начала игры, \"выход\" для выхода: ");
+            String user = scan.nextLine();
+            if (user.equals("играть")){
+                game();
+            }
+            if (user.equals("выход")){
                 break;
-            } else if (Objects.equals(choice, "play")) {
-                int lives = 8;
-                String[] wordsArr = {"java", "kotlin", "python", "javascript"};
-                String word = generateWord(wordsArr);
-                StringBuilder hiddenWord = hiddenWordGen(word);
-                StringBuilder chosenLetters = new StringBuilder("");
-                while (true) {
+            }
+        }
+    }
+    public static void game (){
+        Scanner scan = new Scanner(System.in);
+        Random random = new Random();
+        System.out.println("Висилица!");
 
-                    if (lives == 0) {
-                        System.out.println("You lost!");
-                        break;
+        ArrayList<String> someLetters = new ArrayList<>();
+        String[] words = {"java", "python", "javascript", "kotlin"};
+        String variation = words[random.nextInt(words.length)];
+        StringBuffer secret = new StringBuffer(variation);
+        char[] symbol = variation.toCharArray();
+        for (int i = 0; i < symbol.length; i++) {
+            secret.setCharAt(i,'-');
+        }
+        short health = 8;
+        boolean True = true;
+        while (True) {
+            if (health > 0) {
+                System.out.print(secret + "\nВведите букву:");
+                String user = scan.nextLine();
+                if (user.length()>1){
+                    System.out.println("Вы можете ввести только одну букву");
+                    continue;}
+                if(!user.matches("[a-z]")) {
+                    System.out.println("Введите строчную английскую букву, пожалуйста");
+                    continue;
+                }
+                if (variation.contains(user)) {
+                    if (someLetters.contains(user)) {
+                        System.out.println("Эта буква уже угадана");
                     } else {
-                        if (hiddenWord.indexOf("-") != -1) {
-                            System.out.printf("Guess the word %s:", hiddenWord);
-                            String answer = userInput.nextLine();
-                            if (checker(answer, chosenLetters)) {
-                                chosenLetters.append(answer);
-                                if (!word.contains(answer)) {
-                                    System.out.println("The letter doesn't appear in word");
-                                    --lives;
-                                } else {
-                                    hiddenWord = updateHiddenWord(hiddenWord, answer, word);
-                                }
+                        for (int i = 0; i < variation.length(); i++) {
+                            if (symbol[i] == user.charAt(0)) {
+                                secret.setCharAt(i, user.charAt(0));
                             }
-                        } else {
-                            System.out.println(hiddenWord);
-                            System.out.println("You win!");
-                            break;
                         }
                     }
+                    if (secret.toString().equals(variation)) {
+                        System.out.println(variation+"\nПоздравляю с победой!!!");
+                        break;
+                    }
+                } else {
+                    System.out.println("Этой буквы нет в слове!");
+                    health--;
                 }
+                someLetters.add(user);
+            } else {
+                System.out.println("Вы проиграли!");
+                break;
             }
-        }
-    }
-    public static String generateWord(String[] wordsArr) {
-        Random randomIntGen = new Random();
-        int randomInt = randomIntGen.nextInt(wordsArr.length);
-        return wordsArr[randomInt];
-    }
-    public static StringBuilder hiddenWordGen(String word) {
-        StringBuilder hiddenWord = new StringBuilder("");
-        hiddenWord.append("-".repeat(word.length()));
-        return hiddenWord;
-    }
-    public static StringBuilder updateHiddenWord(StringBuilder hiddenWord, String answer, String  word) {
-        int index = 0;
-        while (index >= 0) {
-            index = word.indexOf(answer, index);
-            if (index >= 0) {
-                hiddenWord.setCharAt(index, answer.charAt(0));
-                ++index;
-            }
-        }
-        return hiddenWord;
-    }
-    public static Boolean checker(String answer, StringBuilder chosen_letters) {
-        String letters = "qwertyuiopasdfghjklzxcvbnm";
-        if (answer.length() != 1) {
-            System.out.println("You should enter one letter");
-            return false;
-        }
-        else if (!letters.contains(answer)){
-            System.out.println("You should enter only english lowercase letters!");
-            return false;
-        }
-        else if (chosen_letters.indexOf(answer) != -1){
-            System.out.println("You already choose that letter");
-            return false;
-        }
-        else {
-            return true;
         }
     }
 }
